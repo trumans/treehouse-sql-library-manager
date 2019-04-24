@@ -39,7 +39,10 @@ app.get('/books/:id', (req, res, next) => {
 });
 
 app.post('/books/:id/delete', (req, res, next) => {
-	// delete book SQL call
+	console.log("in books delete");
+	Book.findByPk(req.params.id)
+		.then( function(book) { book.destroy() })
+		.then( function() { res.redirect('/books') });
 });
 
 app.post('/books/:id', (req, res, next) => {
