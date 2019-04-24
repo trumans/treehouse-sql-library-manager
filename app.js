@@ -12,6 +12,15 @@ sequelize.sync().then(function() {
 	app.listen(3000, () => { console.log('\napp is listening on port 3000') });
 });
 
+app.get('/books/new', (req, res, next) => {
+	res.render('new-book', { book: Book.build(), title: 'New Book' });
+});
+
+app.post('/books/new', (req, res, next) => {
+	console.log('req body '+req.body);
+	Book.create(req.body).then(function() {res.redirect('/books')});
+});
+
 app.get('/books/:id', (req, res, next) => {
 	Book.findByPk(req.params.id).then( function(book) { 
 		if ( book ) {
@@ -28,15 +37,9 @@ app.post('/books/:id/delete', (req, res, next) => {
 });
 
 app.post('/books/:id', (req, res, next) => {
-	// update book SQL call
-});
-
-app.get('/books/new', (req, res, next) => {
-	res.render('new-book', { title: 'New Book' });
-});
-
-app.post('/books/new', (req, res, next) => {
-	// create book SQL call
+	Book.findByPk(req.params.id)
+		.then( function(book) { book.update(req.body) })
+		.then( function() { res.redirect('/books') });
 });
 
 app.get('/books', (req, res) => {
