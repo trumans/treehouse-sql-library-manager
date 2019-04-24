@@ -1,13 +1,20 @@
 // Library Manager app
 
 const express = require('express');
-const app = express();
+const bodyParser = require('body-parser');
 const sequelize = require('./models').sequelize;
+const app = express();
 
 const Book = require('./models').Book;
 
 app.set('view engine', 'pug');
 app.use('/static', express.static('public'));
+
+// support http request parsing
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
+
+// Synchronize Sequelize models and database then start listener at port 3000
 sequelize.sync().then(function() {
 	app.listen(3000, () => { console.log('\napp is listening on port 3000') });
 });
@@ -17,7 +24,6 @@ app.get('/books/new', (req, res, next) => {
 });
 
 app.post('/books/new', (req, res, next) => {
-	console.log('req body '+req.body);
 	Book.create(req.body).then(function() {res.redirect('/books')});
 });
 
