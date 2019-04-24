@@ -49,28 +49,26 @@ app.get('/', (req, res) => {
   res.redirect('/books');
 });
 
-// intentionally throw an error
+// intentionally throw an error to display the Server Error page
 app.get('/error', (req, res) => {
-	message = new Error('Route intentionally returns a 400 error');
 	status = 400;
-	res.render('error', { status, message });
+	message = new Error('The route intentionally returns a 400 error');
+	title = "Server Error";
+	res.render('error', { status, message, title });
 });
 
 // capture undefined routes to show a 404 error.
 app.use((req, res) => {
-	res.render('page-not-found');
+	res.render('page-not-found', {title: "Page Not Found"});
 });
 
 // catch errors thrown by app for any request and route
 app.use((err, req, res, next) => {
-	console.log("in err catcher. err.status is "+err.status);
-	(err.status >= 100 && err.status < 600) ? e = err.status : e = 418
-  //res.status(e);
-  // display stack dump on formated error page
-	res.locals.status = e
+	// pass to the error page the http status 
+	//   or the teapot status if outside of expected status range
+	res.locals.status = 
+		(err.status >= 100 && err.status < 600) ? err.status : 418;
 	res.locals.message = err;
+	res.locals.title = "Server Error";
 	res.render('error');
 });
-
-
-

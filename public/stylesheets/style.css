@@ -94,5 +94,9 @@ input[type=text] {
 
 .error {
   color: rgb(236, 15, 15);
+}
+
+.monospace_message {
+  color: gray;
   font-family: Courier, serif;
 }
