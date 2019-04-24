@@ -16,8 +16,6 @@ $node_modules/.bin/sequelize model:create --name Book --attributes title:string,
 edit models/book.js to add validation to title and author fields. 
 	validate: { notEmpty: {msg: "Title is required"} }
 
-** Video contained instructions to add "sequelize.sync()" somewhere to update database to match model **
-
-Message to slack:
-
-I needed to take a break from treehouse for about a month and unfortunately a lot of knowledge from previous units evaporated from my brain. I know that package.json needs a config start script for "npm start" to work.  Is there an init command that creates that config? Which unit can I re-watch and refresh my memory? 
+use app.js from portfolio project as a template for the app's core script.
+- update package.json to start app by "node app.js"
+- wrap sequelize.sync() around app.listen(3000...) statement
