@@ -19,92 +19,19 @@ sequelize.sync().then(function() {
 	app.listen(3000, () => { console.log('\napp is listening on port 3000') });
 });
 
+// Create parameters for error page to display a 500 error
 function status_500_params(message) {
 	return {status: 500, message: message, title: "Server Error"}
 }
 
+// Create parameters for error page to display response status code and message
 function response_status_params(res) {
 	return {status: res.statusCode, message: res.statusMessage, 
 			title: "Server Error"}
 }
 
-// Create a new book form
-app.get('/books/new', (req, res, next) => {
-	res.render('new-book', { book: Book.build(), title: 'New Book' });
-});
-
-// Create a new book - post action
-app.post('/books/new', (req, res, next) => {
-	Book.create(req.body)
-		.then( function() {res.redirect('/books')})
-		// If validation error then re-render page with error messages
-		.catch( function(err) {
-        	if (err.name === "SequelizeValidationError") {
-            	var book = Book.build(req.body);
-    			book.id = req.params.id
-            	res.render('new-book', 
-              		{ book: book, title: 'New Book', errors: err.errors });
-        	} else {
-				res.render('error', status_500_params(err));
-        	}
-        });
-});
-
-// Display/update/delete a book form
-app.get('/books/:id', (req, res, next) => {
-	Book.findByPk(req.params.id).then( function(book) { 
-		if ( book ) {
-    		return res.render('update-book', { book: book, title: book.title });
-    	} else {
-      		// book was not in database. return 404 error
-      		next();
-  		}
-  	});
-});
-
-// Delete a book - post action
-app.post('/books/:id/delete', (req, res, next) => {
-	Book.findByPk(req.params.id)
-		.then( function(book) { 
-			if (book) {
-				book.destroy(); 
-			} else {
-				res.render('error', response_status_params(res));
-			}})
-		.then( function() { res.redirect('/books') })
-		.catch( function(err) {
-			res.render('error', status_500_params(err));
-		});
-});
-
-// Update a book - post action
-app.post('/books/:id', (req, res, next) => {
-	Book.findByPk(req.params.id)
-		.then( function(book) { return book.update(req.body); })
-		.then( function(book) { 
-			if (book) { 
-				res.redirect('/books'); 
-			} else {
-				res.render('error', response_status_params(res));
-			}})
-		.catch( function(err) {
-			// If validation error then re-render page with error messages
-        	if (err.name === "SequelizeValidationError") {
-            	var book = Book.build(req.body);
-    			book.id = req.params.id
-            	res.render('update-book', 
-              		{ book: book, title: book.title, errors: err.errors });
-        	} else {
-				res.render('error', status_500_params(err));
-        	}});
-});
-
-// List all books
-app.get('/books', (req, res) => {
-	Book.findAll().then( function(books) {
-  		res.render('index', {books: books, title: 'Books'});
-	});
-});
+const bookRoutes = require('./routes/books');
+app.use(bookRoutes);
 
 // Root - redirects to list all books
 app.get('/', (req, res) => {
