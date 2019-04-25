@@ -5,8 +5,6 @@ const bodyParser = require('body-parser');
 const sequelize = require('./models').sequelize;
 const app = express();
 
-const Book = require('./models').Book;
-
 app.set('view engine', 'pug');
 app.use('/static', express.static('public'));
 
@@ -19,17 +17,6 @@ sequelize.sync().then(function() {
 	app.listen(3000, () => { console.log('\napp is listening on port 3000') });
 });
 
-// Create parameters for error page to display a 500 error
-function status_500_params(message) {
-	return {status: 500, message: message, title: "Server Error"}
-}
-
-// Create parameters for error page to display response status code and message
-function response_status_params(res) {
-	return {status: res.statusCode, message: res.statusMessage, 
-			title: "Server Error"}
-}
-
 const bookRoutes = require('./routes/books');
 app.use(bookRoutes);
 
@@ -39,9 +26,9 @@ app.get('/', (req, res) => {
 });
 
 // intentionally throw an error to display the Server Error page
-app.get('/error', (req, res) => {
-	status = 400;
-	message = new Error('The route intentionally returns a 400 error');
+app.get('/server-error', (req, res) => {
+	status = 599;
+	message = new Error('The route intentionally returns a 599 error');
 	title = "Server Error";
 	res.render('error', { status, message, title });
 });
