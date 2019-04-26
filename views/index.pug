@@ -2,12 +2,14 @@ extends layout.pug
 
 block content
   header
-    h1 Books 
-  p
+    h1 Books
+
+  form(method='get' action='/books')
     a.button(href='/books/new') Create New Book
-    form(method='get' action='/books')
-      input(type="search" placeholder="search" name="s" value=search) 
-      input(type="submit")
+    input(type='search' placeholder='search' name='s' value=search style='margin-left: 150px')
+    input(type='submit')
+
+  p
   table
     thead
       tr
@@ -23,6 +25,7 @@ block content
           td= book.author
           td= book.genre
           td= book.year
+
   p
   if prevPage
     a.button(href=`/books?p=${prevPage}&s=${search}`) previous
