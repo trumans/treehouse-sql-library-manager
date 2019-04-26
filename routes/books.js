@@ -3,6 +3,10 @@ const router = express.Router();
 
 const Book = require('../models').Book;
 
+const pageSize = 5;
+const Sequelize = require('sequelize');
+const SqlOp = Sequelize.Op;
+
 // Return parameters for error page to display a 500 error
 function status_500_params(message) {
 	return {status: 500, message: message, title: "Server Error"}
@@ -85,9 +89,25 @@ router.post('/books/:id', (req, res, next) => {
         	}});
 });
 
-// List all books
+// List all books by page
 router.get('/books', (req, res) => {
-	Book.findAll().then( function(books) {
+	const page = parseInt(req.query.p);  // page# from URL query params
+	var opts = { offset: ( isNaN(page) ) ? 0 : (page-1) * pageSize, 
+				 limit:  pageSize
+			   }
+	// search criteria, if in query string
+	if (req.query.s != undefined) {
+		const search = `%${req.query.s}%`;
+		opts.where = { 
+				[SqlOp.or]: [
+					{title:  {[SqlOp.like]: search}}, 
+					{author: {[SqlOp.like]: search}}, 
+					{genre:  {[SqlOp.like]: search}}, 
+					{year:   {[SqlOp.like]: search}} 
+				]}
+	}
+
+	Book.findAll(opts).then( function(books) {
   		res.render('index', {books: books, title: 'Books'});
 	});
 });
