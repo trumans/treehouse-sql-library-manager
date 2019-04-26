@@ -2,10 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 const Book = require('../models').Book;
+const SqlOp = require('sequelize').Op;
 
 const pageSize = 5;
-const Sequelize = require('sequelize');
-const SqlOp = Sequelize.Op;
 
 // Return parameters for error page to display a 500 error
 function status_500_params(message) {
