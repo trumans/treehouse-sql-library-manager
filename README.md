@@ -1,7 +1,7 @@
 
 # Routes and Features #
 
-* / (root)v         - redirects to /books
+* / (root)          - redirects to /books
 * /books (get)      - list books in database. supported query strings:
   * p=page  - where 'page' is which the page of the results to display. Page 1 is 
               displayed if the key is omitted or the value does not parse to an 
